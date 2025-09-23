@@ -47,6 +47,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        academic: {
+          blue: "hsl(var(--academic-blue))",
+          green: "hsl(var(--academic-green))",
+          light: "hsl(var(--academic-light))",
+          dark: "hsl(var(--academic-dark))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
