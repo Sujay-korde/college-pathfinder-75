@@ -40,7 +40,7 @@ const CollegePredictorForm = () => {
     const searchParams = new URLSearchParams({
       percentile: formData.percentile,
       category: formData.category,
-      ...(formData.city && { city: formData.city })
+      ...(formData.city && formData.city !== "all" && { city: formData.city })
     });
     
     navigate(`/results?${searchParams.toString()}`);
@@ -113,7 +113,7 @@ const CollegePredictorForm = () => {
                   <SelectValue placeholder="Select preferred city (optional)" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border/50">
-                  <SelectItem value="" className="hover:bg-accent">All Cities</SelectItem>
+                  <SelectItem value="all" className="hover:bg-accent">All Cities</SelectItem>
                   {cities.map((city) => (
                     <SelectItem key={city} value={city} className="hover:bg-accent">
                       {city}
