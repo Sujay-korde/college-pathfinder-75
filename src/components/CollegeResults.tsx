@@ -71,122 +71,85 @@ const CollegeResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-academic-light/20 to-background p-4">
+    <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <Card className="shadow-[var(--shadow-card)] border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2 text-primary hover:text-primary/80"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h1 className="text-2xl font-semibold text-primary">
+              Predicted Colleges
+            </h1>
+            <p className="text-muted-foreground">
+              Based on your selection criteria.
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-medium">
+              {filteredColleges.length} colleges found
+            </div>
+            {filteredColleges.length > 0 && (
               <Button 
-                variant="ghost" 
-                onClick={() => navigate("/")}
-                className="flex items-center gap-2 hover:bg-accent"
+                onClick={downloadCSV}
+                className="bg-green-600 hover:bg-green-700 text-white"
               >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Search
+                <Download className="mr-2 h-4 w-4" />
+                Export
               </Button>
-              
-              {filteredColleges.length > 0 && (
-                <Button 
-                  onClick={downloadCSV}
-                  className="flex items-center gap-2 bg-secondary hover:bg-secondary/90 text-white"
-                >
-                  <Download className="h-4 w-4" />
-                  Download CSV
-                </Button>
-              )}
-            </div>
-            
-            <div className="text-center space-y-2">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                College Predictions
-              </CardTitle>
-              <CardDescription className="text-base">
-                Results for {percentile}th percentile, {category} category
-                {city && `, ${city}`}
-              </CardDescription>
-            </div>
-          </CardHeader>
-        </Card>
+            )}
+          </div>
+        </div>
 
-        {/* Results */}
-        {filteredColleges.length === 0 ? (
-          <Card className="shadow-[var(--shadow-card)] border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardContent className="py-12 text-center">
-              <div className="flex flex-col items-center space-y-4">
-                <div className="p-4 bg-orange-100 rounded-full">
-                  <AlertCircle className="h-8 w-8 text-orange-600" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    No Colleges Found
-                  </h3>
-                  <p className="text-muted-foreground">
-                    No colleges match your criteria. Try adjusting your search parameters or removing city filter.
-                  </p>
-                </div>
-                <Button 
-                  onClick={() => navigate("/")}
-                  className="bg-primary hover:bg-primary/90 text-white"
-                >
-                  Try Again
-                </Button>
+        {/* Results Table */}
+        <Card className="bg-card border-border shadow-[var(--shadow-card)]">
+          <CardContent className="p-0">
+            {filteredColleges.length === 0 ? (
+              <div className="text-center py-12">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-foreground">No colleges found</h3>
+                <p className="text-muted-foreground">
+                  No colleges match your criteria. Try adjusting your percentile or category.
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card className="shadow-[var(--shadow-card)] border-border/50 bg-card/80 backdrop-blur-sm">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <School className="h-5 w-5 text-primary" />
-                <CardTitle className="text-xl">
-                  Found {filteredColleges.length} College{filteredColleges.length !== 1 ? 's' : ''}
-                </CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
+            ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-border/50">
-                      <TableHead className="font-semibold text-foreground">College Name</TableHead>
-                      <TableHead className="font-semibold text-foreground">Branch</TableHead>
-                      <TableHead className="font-semibold text-foreground">City</TableHead>
-                      <TableHead className="font-semibold text-foreground">Category</TableHead>
-                      <TableHead className="font-semibold text-foreground text-right">Cutoff Percentile</TableHead>
+                    <TableRow className="border-border bg-muted/50">
+                      <TableHead className="w-12 font-semibold text-foreground border-r border-border">#</TableHead>
+                      <TableHead className="font-semibold text-foreground border-r border-border">COLLEGE NAME</TableHead>
+                      <TableHead className="font-semibold text-foreground">BRANCH</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredColleges.map((college) => (
-                      <TableRow key={college.id} className="border-border/50 hover:bg-accent/50 transition-colors">
-                        <TableCell className="font-medium text-foreground">
+                    {filteredColleges.map((college, index) => (
+                      <TableRow 
+                        key={`${college.id}-${index}`} 
+                        className="border-border hover:bg-muted/30 transition-colors"
+                      >
+                        <TableCell className="font-medium text-foreground border-r border-border">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="font-medium text-foreground border-r border-border">
                           {college.college_name}
                         </TableCell>
-                        <TableCell className="text-muted-foreground">
+                        <TableCell className="text-foreground">
                           {college.branch}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {college.city}
-                        </TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant="outline" 
-                            className={getCategoryColor(college.category)}
-                          >
-                            {college.category}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-medium text-foreground">
-                          {college.cutoff_percentile}%
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

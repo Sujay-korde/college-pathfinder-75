@@ -47,91 +47,146 @@ const CollegePredictorForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-academic-light/20 to-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg shadow-[var(--shadow-card)] border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardHeader className="text-center space-y-4">
-          <div className="flex justify-center">
-            <div className="p-3 bg-gradient-to-r from-primary to-secondary rounded-full">
-              <GraduationCap className="h-8 w-8 text-white" />
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-bold text-primary">
+            MHT-CET 2025 College Predictor
+          </h1>
+          <p className="text-muted-foreground">
+            By RightWay Counseling Center
+          </p>
+        </div>
+
+        {/* CAP Round Selection */}
+        <Card className="bg-card border-border shadow-[var(--shadow-card)]">
+          <CardContent className="p-6">
+            <div className="space-y-2">
+              <Label className="text-foreground font-medium">Select CAP Round</Label>
+              <Select defaultValue="all-india">
+                <SelectTrigger className="bg-background border-border text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border">
+                  <SelectItem value="all-india">All India Round</SelectItem>
+                  <SelectItem value="state">State Round</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            College Predictor
-          </CardTitle>
-          <CardDescription className="text-base text-muted-foreground">
-            Find engineering colleges based on your JEE Main percentile and category
-          </CardDescription>
-        </CardHeader>
+          </CardContent>
+        </Card>
+
+        {/* Main Form */}
+        <Card className="bg-card border-border shadow-[var(--shadow-card)]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <GraduationCap className="h-5 w-5 text-primary" />
+              Prediction Parameters
+            </CardTitle>
+          </CardHeader>
         
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="percentile" className="text-sm font-medium flex items-center gap-2">
-                <Calculator className="h-4 w-4 text-primary" />
-                JEE Main Percentile *
-              </Label>
-              <Input
-                id="percentile"
-                type="number"
-                placeholder="Enter your percentile (0-100)"
-                value={formData.percentile}
-                onChange={(e) => setFormData({...formData, percentile: e.target.value})}
-                min="0"
-                max="100"
-                step="0.01"
-                required
-                className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-              />
-            </div>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Rank Input */}
+                <div className="space-y-2">
+                  <Label className="text-foreground font-medium">Your Rank (Merit No.)</Label>
+                  <Input
+                    placeholder="e.g., 12345"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                  />
+                  <p className="text-xs text-muted-foreground">Enter your official MHT-CET merit rank</p>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="category" className="text-sm font-medium flex items-center gap-2">
-                <GraduationCap className="h-4 w-4 text-primary" />
-                Category *
-              </Label>
-              <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
-                <SelectTrigger className="h-12 bg-background/50 border-border/50 focus:border-primary">
-                  <SelectValue placeholder="Select your category" />
-                </SelectTrigger>
-                <SelectContent className="bg-popover border-border/50">
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category} className="hover:bg-accent">
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                {/* Percentile Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="percentile" className="text-foreground font-medium">Your Percentile</Label>
+                  <Input
+                    id="percentile"
+                    type="number"
+                    placeholder="e.g., 98.7654"
+                    value={formData.percentile}
+                    onChange={(e) => setFormData({...formData, percentile: e.target.value})}
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    required
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                  />
+                  <p className="text-xs text-muted-foreground">Alternatively, enter your percentile</p>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="city" className="text-sm font-medium flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-primary" />
-                Preferred City (Optional)
-              </Label>
-              <Select value={formData.city} onValueChange={(value) => setFormData({...formData, city: value})}>
-                <SelectTrigger className="h-12 bg-background/50 border-border/50 focus:border-primary">
-                  <SelectValue placeholder="Select preferred city (optional)" />
-                </SelectTrigger>
-                <SelectContent className="bg-popover border-border/50">
-                  <SelectItem value="all" className="hover:bg-accent">All Cities</SelectItem>
-                  {cities.map((city) => (
-                    <SelectItem key={city} value={city} className="hover:bg-accent">
-                      {city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                {/* Category */}
+                <div className="space-y-2">
+                  <Label className="text-foreground font-medium">Category</Label>
+                  <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
+                    <SelectTrigger className="bg-background border-border text-foreground">
+                      <SelectValue placeholder="Select your category/caste/category" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border-border">
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category} className="hover:bg-accent">
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <Button 
-              type="submit" 
-              className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-semibold shadow-[var(--shadow-button)] transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
-            >
-              Predict Colleges
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+                {/* Available Branches */}
+                <div className="space-y-2">
+                  <Label className="text-foreground font-medium">Available Branches</Label>
+                  <Input
+                    placeholder="e.g., Computer Engineering"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
+                  />
+                  <p className="text-xs text-muted-foreground">Select branches to add to your preference list</p>
+                </div>
+              </div>
+
+              {/* Branch Preference Order */}
+              <div className="space-y-3">
+                <Label className="text-foreground font-medium">Branch Preference Order</Label>
+                <div className="border-2 border-dashed border-primary/30 rounded-lg p-8 text-center bg-background/50">
+                  <div className="text-muted-foreground space-y-2">
+                    <div className="text-2xl">+</div>
+                    <div>Select branches from above to set your preference order</div>
+                    <div className="text-sm">Drag to reorder or click to remove</div>
+                    <div className="text-xs">Drag branches to reorder your preferences. Higher priority branches will be shown first in results.</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Preferred Cities */}
+              <div className="space-y-2">
+                <Label className="text-foreground font-medium">Preferred Cities</Label>
+                <Select value={formData.city} onValueChange={(value) => setFormData({...formData, city: value})}>
+                  <SelectTrigger className="bg-background border-border text-foreground">
+                    <SelectValue placeholder="e.g., Pune, Mumbai" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    <SelectItem value="all" className="hover:bg-accent">All Cities</SelectItem>
+                    {cities.map((city) => (
+                      <SelectItem key={city} value={city} className="hover:bg-accent">
+                        {city}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 shadow-[var(--shadow-button)] transition-all duration-300"
+              >
+                <GraduationCap className="mr-2 h-4 w-4" />
+                Predict My Colleges
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
