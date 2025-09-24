@@ -29,7 +29,7 @@ const Landing = () => {
           </div>
           
           <div className="animate-fade-in-delayed" style={{animationDelay: '0.3s'}}>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="font-sans text-lg font-medium text-muted-foreground">
               Discover your optimal college choices based on your MHTCET score and preferences. 
               Get accurate predictions and make informed decisions about your future.
             </p>
