@@ -22,14 +22,14 @@ const Landing = () => {
         
         <div className="relative z-10 container mx-auto px-4 text-center">
           <div className="animate-slide-up">
-            <h1 className="font-heading text-4xl md:text-7xl font-bold mb-6 text-white leading-tight">
+            <h1 className="font-heading text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
               Find your perfect<br />
               <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">college with precision</span>
             </h1>
           </div>
           
           <div className="animate-fade-in-delayed" style={{animationDelay: '0.3s'}}>
-            <p className="font-sans text-lg font-medium text-muted-foreground max-w-2xl mx-auto leading-7">
+            <p className="font-sans text-lg font-medium text-muted-foreground">
               Discover your optimal college choices based on your MHTCET score and preferences. 
               Get accurate predictions and make informed decisions about your future.
             </p>
