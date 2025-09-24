@@ -1,7 +1,13 @@
-import CollegePredictorForm from "@/components/CollegePredictorForm";
+import Landing from "@/components/Landing";
+import Navbar from "@/components/Navbar";
 
 const Index = () => {
-  return <CollegePredictorForm />;
+  return (
+    <div>
+      <Navbar />
+      <Landing />
+    </div>
+  );
 };
 
 export default Index;

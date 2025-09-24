@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -71,14 +72,16 @@ const CollegeResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="pt-20 p-4">
+        <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/predictor")}
               className="flex items-center gap-2 text-primary hover:text-primary/80"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -150,6 +153,7 @@ const CollegeResults = () => {
             )}
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );
