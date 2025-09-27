@@ -7,6 +7,16 @@ export interface College {
   cutoff_percentile: number;
 }
 
+// CSV College interface based on the actual CSV structure
+export interface CSVCollege {
+  College: string;
+  Branch: string;
+  Category: string;
+  "Merit No": string;
+  Percentile: string;
+  City: string;
+}
+
 export const mockColleges: College[] = [
   // IITs
   { id: 1, college_name: "IIT Delhi", branch: "Computer Science", city: "Delhi", category: "OPEN", cutoff_percentile: 99.5 },

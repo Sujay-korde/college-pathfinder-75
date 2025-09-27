@@ -1,12 +1,17 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import Papa from "papaparse";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { mockColleges, type College } from "@/data/colleges";
-import { ArrowLeft, Download, School, AlertCircle } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { type College, type CSVCollege } from "@/data/colleges";
+import { ArrowLeft, Download, School, AlertCircle, Filter } from "lucide-react";
 
 const CollegeResults = () => {
   const navigate = useNavigate();
@@ -16,20 +21,86 @@ const CollegeResults = () => {
   const category = searchParams.get("category") || "";
   const city = searchParams.get("city") || "";
 
+  // State for CSV data and filters
+  const [colleges, setColleges] = useState<College[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [percentileRange, setPercentileRange] = useState([Math.max(0, percentile - 6), percentile]);
+  const [selectedCategory, setSelectedCategory] = useState(category);
+  const [selectedCity, setSelectedCity] = useState(city);
+  const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
+  const [uniqueCities, setUniqueCities] = useState<string[]>([]);
+
+  // Load and parse CSV data
+  useEffect(() => {
+    const loadCSVData = async () => {
+      try {
+        const response = await fetch('/mht_cet_r1city.csv');
+        const csvText = await response.text();
+        
+        Papa.parse<CSVCollege>(csvText, {
+          header: true,
+          complete: (results) => {
+            const parsedColleges: College[] = results.data
+              .filter(row => row.College && row.Branch && row.Percentile) // Filter out empty rows
+              .map((row, index) => ({
+                id: index + 1,
+                college_name: row.College || '',
+                branch: row.Branch || '',
+                city: row.City || '',
+                category: row.Category || '',
+                cutoff_percentile: parseFloat(row.Percentile) || 0
+              }))
+              .filter(college => college.cutoff_percentile > 0); // Filter out invalid percentiles
+
+            setColleges(parsedColleges);
+            
+            // Extract unique values for filters
+            const categories = [...new Set(parsedColleges.map(c => c.category))].filter(Boolean).sort();
+            const cities = [...new Set(parsedColleges.map(c => c.city))].filter(Boolean).sort();
+            
+            setUniqueCategories(categories);
+            setUniqueCities(cities);
+            setLoading(false);
+          },
+          error: (error) => {
+            console.error('Error parsing CSV:', error);
+            setLoading(false);
+          }
+        });
+      } catch (error) {
+        console.error('Error loading CSV:', error);
+        setLoading(false);
+      }
+    };
+
+    loadCSVData();
+  }, []);
+
+  // Update filters when URL params change
+  useEffect(() => {
+    setPercentileRange([Math.max(0, percentile - 6), percentile]);
+    setSelectedCategory(category);
+    setSelectedCity(city);
+  }, [percentile, category, city]);
+
   const filteredColleges = useMemo(() => {
-    return mockColleges.filter((college: College) => {
-      // Filter by cutoff percentile
-      if (college.cutoff_percentile > percentile) return false;
+    if (!colleges.length) return [];
+    
+    return colleges.filter((college: College) => {
+      // Filter by percentile range (user's percentile down to 5-6 percentiles lower)
+      if (college.cutoff_percentile < percentileRange[0] || college.cutoff_percentile > percentileRange[1]) {
+        return false;
+      }
       
       // Filter by category
-      if (college.category !== category) return false;
+      if (selectedCategory && college.category !== selectedCategory) return false;
       
       // Filter by city if specified
-      if (city && college.city !== city) return false;
+      if (selectedCity && college.city !== selectedCity) return false;
       
       return true;
     }).sort((a, b) => b.cutoff_percentile - a.cutoff_percentile); // Sort by cutoff percentile (highest first)
-  }, [percentile, category, city]);
+  }, [colleges, percentileRange, selectedCategory, selectedCity]);
 
   const downloadCSV = () => {
     const headers = ["College Name", "Branch", "City", "Category", "Cutoff Percentile"];
@@ -51,7 +122,7 @@ const CollegeResults = () => {
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
-      link.setAttribute("download", `college_predictions_${percentile}_${category}.csv`);
+      link.setAttribute("download", `college_predictions_${percentileRange[0]}-${percentileRange[1]}_${selectedCategory || 'all'}.csv`);
       link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
@@ -71,6 +142,22 @@ const CollegeResults = () => {
     return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-600 border-gray-200";
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="pt-20 p-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading college data...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -81,7 +168,7 @@ const CollegeResults = () => {
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
-              onClick={() => navigate("/predictor")}
+              onClick={() => navigate("/")}
               className="flex items-center gap-2 text-primary hover:text-primary/80"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -108,6 +195,91 @@ const CollegeResults = () => {
             )}
           </div>
         </div>
+
+        {/* Filters */}
+        <Card className="bg-card border-border shadow-[var(--shadow-card)]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <Filter className="h-5 w-5" />
+              Filters
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Percentile Range */}
+              <div className="space-y-3">
+                <Label htmlFor="percentile-range" className="text-sm font-medium text-foreground">
+                  Percentile Range: {percentileRange[0]}% - {percentileRange[1]}%
+                </Label>
+                <Slider
+                  id="percentile-range"
+                  value={percentileRange}
+                  onValueChange={setPercentileRange}
+                  min={0}
+                  max={100}
+                  step={0.1}
+                  className="w-full"
+                />
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Min"
+                    value={percentileRange[0]}
+                    onChange={(e) => setPercentileRange([parseFloat(e.target.value) || 0, percentileRange[1]])}
+                    className="flex-1"
+                    min={0}
+                    max={100}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Max"
+                    value={percentileRange[1]}
+                    onChange={(e) => setPercentileRange([percentileRange[0], parseFloat(e.target.value) || 100])}
+                    className="flex-1"
+                    min={0}
+                    max={100}
+                  />
+                </div>
+              </div>
+
+              {/* Category Filter */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium text-foreground">Category</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-border">
+                    <SelectItem value="">All Categories</SelectItem>
+                    {uniqueCategories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* City Filter */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium text-foreground">City</Label>
+                <Select value={selectedCity} onValueChange={setSelectedCity}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select city" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border-border max-h-60 overflow-y-auto">
+                    <SelectItem value="">All Cities</SelectItem>
+                    {uniqueCities.map((cityName) => (
+                      <SelectItem key={cityName} value={cityName}>
+                        {cityName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Results Table */}
         <Card className="bg-card border-border shadow-[var(--shadow-card)]">
