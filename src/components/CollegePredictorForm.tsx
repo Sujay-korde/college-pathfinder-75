@@ -20,7 +20,7 @@ const CollegePredictorForm = () => {
   const [formData, setFormData] = useState<FormData>({
     percentile: "",
     category: "",
-    city: ""
+    city: "all-cities"
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,7 +41,7 @@ const CollegePredictorForm = () => {
     const searchParams = new URLSearchParams({
       percentile: formData.percentile,
       category: formData.category,
-      ...(formData.city && formData.city !== "all" && { city: formData.city })
+      ...(formData.city && formData.city !== "all-cities" && { city: formData.city })
     });
     
     navigate(`/results?${searchParams.toString()}`);
@@ -171,7 +171,7 @@ const CollegePredictorForm = () => {
                     <SelectValue placeholder="e.g., Pune, Mumbai" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
-                    <SelectItem value="all" className="hover:bg-accent">All Cities</SelectItem>
+                    <SelectItem value="all-cities" className="hover:bg-accent">All Cities</SelectItem>
                     {loading ? (
                       <SelectItem value="loading" disabled>Loading cities...</SelectItem>
                     ) : (

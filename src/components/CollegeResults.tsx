@@ -24,14 +24,14 @@ const CollegeResults = () => {
 
   // State for filters
   const [percentileRange, setPercentileRange] = useState([Math.max(0, percentile - 6), percentile]);
-  const [selectedCategory, setSelectedCategory] = useState(category);
-  const [selectedCity, setSelectedCity] = useState(city);
+  const [selectedCategory, setSelectedCategory] = useState(category || "all-categories");
+  const [selectedCity, setSelectedCity] = useState(city || "all-cities");
 
   // Update filters when URL params change
   useEffect(() => {
     setPercentileRange([Math.max(0, percentile - 6), percentile]);
-    setSelectedCategory(category);
-    setSelectedCity(city);
+    setSelectedCategory(category || "all-categories");
+    setSelectedCity(city || "all-cities");
   }, [percentile, category, city]);
 
   const filteredColleges = useMemo(() => {
@@ -50,10 +50,10 @@ const CollegeResults = () => {
       }
       
       // Filter by category
-      if (selectedCategory && college.category !== selectedCategory) return false;
+      if (selectedCategory && selectedCategory !== "all-categories" && college.category !== selectedCategory) return false;
       
       // Filter by city if specified
-      if (selectedCity && college.city !== selectedCity) return false;
+      if (selectedCity && selectedCity !== "all-cities" && college.city !== selectedCity) return false;
       
       return true;
     }).sort((a, b) => b.cutoff_percentile - a.cutoff_percentile); // Sort by cutoff percentile (highest first)
@@ -84,7 +84,7 @@ const CollegeResults = () => {
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
-      link.setAttribute("download", `college_predictions_${percentileRange[0]}-${percentileRange[1]}_${selectedCategory || 'all'}.csv`);
+      link.setAttribute("download", `college_predictions_${percentileRange[0]}-${percentileRange[1]}_${selectedCategory === "all-categories" ? "all" : selectedCategory}.csv`);
       link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
@@ -212,7 +212,7 @@ const CollegeResults = () => {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border-border">
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all-categories">All Categories</SelectItem>
                     {uniqueCategories.map((cat) => (
                       <SelectItem key={cat} value={cat}>
                         {cat}
@@ -230,7 +230,7 @@ const CollegeResults = () => {
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border-border max-h-60 overflow-y-auto">
-                    <SelectItem value="">All Cities</SelectItem>
+                    <SelectItem value="all-cities">All Cities</SelectItem>
                     {uniqueCities.map((cityName) => (
                       <SelectItem key={cityName} value={cityName}>
                         {cityName}
