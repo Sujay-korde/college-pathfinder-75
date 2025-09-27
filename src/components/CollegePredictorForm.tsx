@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { categories, cities } from "@/data/colleges";
+import { useCollegeData } from "@/hooks/useCollegeData";
 import { GraduationCap, Calculator, MapPin } from "lucide-react";
 
 interface FormData {
@@ -16,6 +16,7 @@ interface FormData {
 
 const CollegePredictorForm = () => {
   const navigate = useNavigate();
+  const { uniqueCategories, uniqueCities, loading } = useCollegeData();
   const [formData, setFormData] = useState<FormData>({
     percentile: "",
     category: "",
@@ -125,11 +126,15 @@ const CollegePredictorForm = () => {
                       <SelectValue placeholder="Select your category/caste/category" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category} className="hover:bg-accent">
-                          {category}
-                        </SelectItem>
-                      ))}
+                      {loading ? (
+                        <SelectItem value="loading" disabled>Loading categories...</SelectItem>
+                      ) : (
+                        uniqueCategories.map((category) => (
+                          <SelectItem key={category} value={category} className="hover:bg-accent">
+                            {category}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -167,11 +172,15 @@ const CollegePredictorForm = () => {
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
                     <SelectItem value="all" className="hover:bg-accent">All Cities</SelectItem>
-                    {cities.map((city) => (
-                      <SelectItem key={city} value={city} className="hover:bg-accent">
-                        {city}
-                      </SelectItem>
-                    ))}
+                    {loading ? (
+                      <SelectItem value="loading" disabled>Loading cities...</SelectItem>
+                    ) : (
+                      uniqueCities.map((city) => (
+                        <SelectItem key={city} value={city} className="hover:bg-accent">
+                          {city}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>

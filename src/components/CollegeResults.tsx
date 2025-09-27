@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Papa from "papaparse";
+import { useCollegeData } from "@/hooks/useCollegeData";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,71 +10,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { type College, type CSVCollege } from "@/data/colleges";
+import { type College } from "@/data/colleges";
 import { ArrowLeft, Download, School, AlertCircle, Filter } from "lucide-react";
 
 const CollegeResults = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { colleges, loading, uniqueCategories, uniqueCities } = useCollegeData();
   
   const percentile = parseFloat(searchParams.get("percentile") || "0");
   const category = searchParams.get("category") || "";
   const city = searchParams.get("city") || "";
 
-  // State for CSV data and filters
-  const [colleges, setColleges] = useState<College[]>([]);
-  const [loading, setLoading] = useState(true);
+  // State for filters
   const [percentileRange, setPercentileRange] = useState([Math.max(0, percentile - 6), percentile]);
   const [selectedCategory, setSelectedCategory] = useState(category);
   const [selectedCity, setSelectedCity] = useState(city);
-  const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
-  const [uniqueCities, setUniqueCities] = useState<string[]>([]);
-
-  // Load and parse CSV data
-  useEffect(() => {
-    const loadCSVData = async () => {
-      try {
-        const response = await fetch('/mht_cet_r1city.csv');
-        const csvText = await response.text();
-        
-        Papa.parse<CSVCollege>(csvText, {
-          header: true,
-          complete: (results) => {
-            const parsedColleges: College[] = results.data
-              .filter(row => row.College && row.Branch && row.Percentile) // Filter out empty rows
-              .map((row, index) => ({
-                id: index + 1,
-                college_name: row.College || '',
-                branch: row.Branch || '',
-                city: row.City || '',
-                category: row.Category || '',
-                cutoff_percentile: parseFloat(row.Percentile) || 0
-              }))
-              .filter(college => college.cutoff_percentile > 0); // Filter out invalid percentiles
-
-            setColleges(parsedColleges);
-            
-            // Extract unique values for filters
-            const categories = [...new Set(parsedColleges.map(c => c.category))].filter(Boolean).sort();
-            const cities = [...new Set(parsedColleges.map(c => c.city))].filter(Boolean).sort();
-            
-            setUniqueCategories(categories);
-            setUniqueCities(cities);
-            setLoading(false);
-          },
-          error: (error) => {
-            console.error('Error parsing CSV:', error);
-            setLoading(false);
-          }
-        });
-      } catch (error) {
-        console.error('Error loading CSV:', error);
-        setLoading(false);
-      }
-    };
-
-    loadCSVData();
-  }, []);
 
   // Update filters when URL params change
   useEffect(() => {
@@ -84,9 +35,15 @@ const CollegeResults = () => {
   }, [percentile, category, city]);
 
   const filteredColleges = useMemo(() => {
-    if (!colleges.length) return [];
+    if (!colleges.length) {
+      console.log('No colleges available for filtering');
+      return [];
+    }
     
-    return colleges.filter((college: College) => {
+    console.log('Filtering colleges. Total colleges:', colleges.length);
+    console.log('Filter criteria:', { percentileRange, selectedCategory, selectedCity });
+    
+    const filtered = colleges.filter((college: College) => {
       // Filter by percentile range (user's percentile down to 5-6 percentiles lower)
       if (college.cutoff_percentile < percentileRange[0] || college.cutoff_percentile > percentileRange[1]) {
         return false;
@@ -100,6 +57,11 @@ const CollegeResults = () => {
       
       return true;
     }).sort((a, b) => b.cutoff_percentile - a.cutoff_percentile); // Sort by cutoff percentile (highest first)
+    
+    console.log('Filtered colleges count:', filtered.length);
+    console.log('First 3 filtered colleges:', filtered.slice(0, 3));
+    
+    return filtered;
   }, [colleges, percentileRange, selectedCategory, selectedCity]);
 
   const downloadCSV = () => {
