@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Database, Users, Target, Phone, Mail, MapPin, BookOpen, Award, TrendingUp } from "lucide-react";
@@ -35,70 +36,86 @@ const Landing = () => {
     <div className="min-h-screen bg-transparent">
       {/* Hero Section */}
       <section
-  className="relative min-h-screen flex items-center justify-center overflow-hidden bg-cover bg-center"
-  style={{ backgroundImage: "url('/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner.jpg')" }}
->
-        <div className="absolute inset-0">
-          {/* <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div> */}
-          {/* <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl animate-float" style={{animationDelay: '2s'}}></div> */}
-        </div>
+        className="relative min-h-screen flex items-center justify-center overflow-hidden bg-cover bg-center"
+        style={{ backgroundImage: "url('/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
         
-        <div className="relative z-10 container mx-auto px-4 text-center">
-          <div className="animate-slide-up">
-            <h1 className="font-heading text-4xl md:text-7xl font-bold mb-6 text-white leading-tight">
-              Find your perfect<br />
-              <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">college with precision</span>
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-white leading-tight tracking-tight">
+              Find your perfect
+              <br />
+              <span className="bg-gradient-to-r from-blue-200 via-white to-blue-200 bg-clip-text text-transparent">
+                college with precision
+              </span>
             </h1>
-          </div>
+          </motion.div>
           
-          <div className="animate-fade-in-delayed" style={{animationDelay: '0.3s'}}>
-            <p className="font-sans text-lg font-medium text-muted-foreground max-w-2xl mx-auto leading-7">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-8"
+          >
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-200 max-w-3xl mx-auto leading-relaxed font-light">
               Discover your optimal college choices based on your MHTCET score and preferences. 
               Get accurate predictions and make informed decisions about your future.
             </p>
-          </div>
+          </motion.div>
           
-          <div className="animate-fade-in-delayed flex flex-col sm:flex-row gap-4 justify-center items-center" style={{animationDelay: '0.6s'}}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12"
+          >
             <Link to="/predictor">
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 hover:scale-105">
+              <Button 
+                size="lg" 
+                className="bg-white text-blue-900 hover:bg-gray-100 px-10 py-6 text-lg font-semibold rounded-2xl shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-white/20"
+              >
                 Try Now
               </Button>
             </Link>
-            <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg rounded-xl backdrop-blur-sm">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+              className="border-2 border-white/40 text-white hover:bg-white/20 px-10 py-6 text-lg rounded-2xl backdrop-blur-md transition-all duration-300 hover:scale-105"
+            >
               Learn More
             </Button>
-          </div>
+          </motion.div>
           
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 animate-fade-in-delayed" style={{animationDelay: '0.9s'}}>
-            <div className="stats-card p-6 rounded-2xl text-center">
-              <div className="text-3xl font-bold text-white mb-2">10,000+</div>
-              <div className="text-white/80">Students Helped</div>
-            </div>
-            <div className="stats-card p-6 rounded-2xl text-center">
-              <div className="text-3xl font-bold text-white mb-2">500+</div>
-              <div className="text-white/80">Colleges Listed</div>
-            </div>
-            <div className="stats-card p-6 rounded-2xl text-center">
-              <div className="text-3xl font-bold text-white mb-2">95%</div>
-              <div className="text-white/80">Accuracy Rate</div>
-            </div>
-          </div>
-
-          {/* Contact form */}
-          <div className="max-w-3xl mx-auto mt-12 px-4">
-            <form onSubmit={handleContactSubmit} className="grid gap-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
-                <Input placeholder="Your email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-              <Textarea placeholder="Your message" value={message} onChange={(e) => setMessage(e.target.value)} />
-              <div className="text-right">
-                <Button type="submit" className="bg-primary hover:bg-primary/90">Send Message</Button>
-              </div>
-            </form>
-          </div>
-
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 mt-20 max-w-4xl mx-auto"
+          >
+            {[
+              { value: "10,000+", label: "Students Helped" },
+              { value: "500+", label: "Colleges Listed" },
+              { value: "95%", label: "Accuracy Rate" }
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.05, borderColor: "rgba(255,255,255,0.5)" }}
+                className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl text-center border-2 border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20"
+              >
+                <div className="text-4xl md:text-5xl font-bold text-white mb-2 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                  {stat.value}
+                </div>
+                <div className="text-white/90 text-sm md:text-base font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -276,38 +293,89 @@ const Landing = () => {
       {/* Contact Section */}
       <section id="contact" className="py-24 bg-gradient-to-br from-card via-card to-muted/20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-20"
+          >
             <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6 text-card-foreground">Get in touch</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               We're here to help you navigate your academic journey with expert guidance and support
             </p>
-          </div>
+          </motion.div>
           
-          <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Mail className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-heading text-xl font-semibold mb-3 text-card-foreground">Email Support</h3>
-              <p className="text-muted-foreground text-lg">support@collegepredictor.com</p>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Phone className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-heading text-xl font-semibold mb-3 text-card-foreground">Phone Support</h3>
-              <p className="text-muted-foreground text-lg">+91 12345 67890</p>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <MapPin className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-heading text-xl font-semibold mb-3 text-card-foreground">Visit Us</h3>
-              <p className="text-muted-foreground text-lg">Mumbai, Maharashtra, India</p>
-            </div>
+          <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto mb-16">
+            {[
+              { icon: Mail, title: "Email Support", info: "support@collegepredictor.com" },
+              { icon: Phone, title: "Phone Support", info: "+91 12345 67890" },
+              { icon: MapPin, title: "Visit Us", info: "Mumbai, Maharashtra, India" }
+            ].map((contact, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+                className="text-center group"
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <contact.icon className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-heading text-xl font-semibold mb-3 text-card-foreground">{contact.title}</h3>
+                <p className="text-muted-foreground text-lg">{contact.info}</p>
+              </motion.div>
+            ))}
           </div>
+
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl mx-auto"
+          >
+            <Card className="border-2 shadow-xl">
+              <CardContent className="p-8">
+                <form onSubmit={handleContactSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Input 
+                        placeholder="Your name" 
+                        value={name} 
+                        onChange={(e) => setName(e.target.value)}
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div>
+                      <Input 
+                        placeholder="Your email" 
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+                  <Textarea 
+                    placeholder="Your message" 
+                    value={message} 
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="rounded-xl min-h-[120px]"
+                  />
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-primary hover:bg-primary/90 rounded-xl py-6 text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                  >
+                    Send Message
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </section>
     </div>
