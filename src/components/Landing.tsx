@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Database, Users, Target, Phone, Mail, MapPin, BookOpen, Award, TrendingUp } from "lucide-react";
@@ -8,8 +9,28 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
 
 const Landing = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      toast({ title: "Please fill all fields", description: "Name, email and message are required." });
+      return;
+    }
+    // Show success (placeholder - replace with API call if backend available)
+    toast({ title: "Message sent", description: "Thanks for contacting us — we'll reply soon." });
+    setName("");
+    setEmail("");
+    setMessage("");
+  };
+
   return (
     <div className="min-h-screen bg-transparent">
       {/* Hero Section */}
@@ -63,6 +84,21 @@ const Landing = () => {
               <div className="text-white/80">Accuracy Rate</div>
             </div>
           </div>
+
+          {/* Contact form */}
+          <div className="max-w-3xl mx-auto mt-12 px-4">
+            <form onSubmit={handleContactSubmit} className="grid gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input placeholder="Your email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
+              <Textarea placeholder="Your message" value={message} onChange={(e) => setMessage(e.target.value)} />
+              <div className="text-right">
+                <Button type="submit" className="bg-primary hover:bg-primary/90">Send Message</Button>
+              </div>
+            </form>
+          </div>
+
         </div>
       </section>
 

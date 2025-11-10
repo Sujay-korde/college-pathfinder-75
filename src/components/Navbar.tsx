@@ -12,7 +12,7 @@ const Navbar = () => {
             <div className="text-2xl font-bold text-primary">CollegePredictor</div>
           </Link>
           
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="flex items-center space-x-6 md:space-x-8">
             <Link to="/" className={`text-sm font-medium transition-colors hover:text-primary ${
               location.pathname === "/" ? "text-primary" : "text-muted-foreground"
             }`}>
@@ -23,15 +23,37 @@ const Navbar = () => {
             }`}>
               Predictor
             </Link>
-            <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            {/* smooth-scrolling anchors that work from any route */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById("features");
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
               Features
-            </a>
-            <a href="#faq" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById("faq");
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
               FAQ
-            </a>
-            <a href="#contact" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById("contact");
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
               Contact
-            </a>
+            </button>
           </div>
 
           <div className="flex items-center space-x-4">
